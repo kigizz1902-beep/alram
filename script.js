@@ -1,4 +1,7 @@
 const STORAGE_KEY = "simple-alarms";
+const WEATHER_LAT = 37.5665;
+const WEATHER_LON = 126.9780;
+const WEATHER_REFRESH_MS = 10 * 60 * 1000;
 
 const clockEl = document.getElementById("clock");
 const timeInput = document.getElementById("alarm-time");
@@ -11,6 +14,9 @@ const ringingLabel = document.getElementById("ringing-label");
 const ringingTime = document.getElementById("ringing-time");
 const snoozeBtn = document.getElementById("snooze-btn");
 const stopBtn = document.getElementById("stop-btn");
+const weatherIconEl = document.getElementById("weather-icon");
+const weatherTempEl = document.getElementById("weather-temp");
+const weatherDescEl = document.getElementById("weather-desc");
 
 let alarms = loadAlarms();
 let activeAlarmId = null;
@@ -196,6 +202,50 @@ function snoozeAlarm() {
   }
 }
 
+function weatherIconFor(iconCode) {
+  const group = iconCode.slice(0, 2);
+  const isNight = iconCode.endsWith("n");
+  const icons = {
+    "01": isNight ? "🌙" : "☀️",
+    "02": "⛅",
+    "03": "☁️",
+    "04": "☁️",
+    "09": "🌧️",
+    "10": "🌦️",
+    "11": "⛈️",
+    "13": "❄️",
+    "50": "🌫️",
+  };
+  return icons[group] || "🌡️";
+}
+
+async function fetchWeather() {
+  if (typeof OPENWEATHER_API_KEY === "undefined" || !OPENWEATHER_API_KEY) {
+    weatherDescEl.textContent = "날씨 API 키가 설정되지 않았습니다.";
+    return;
+  }
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${WEATHER_LAT}&lon=${WEATHER_LON}&units=metric&lang=kr&appid=${OPENWEATHER_API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`날씨 요청 실패 (${res.status})`);
+    const data = await res.json();
+
+    const temp = Math.round(data.main.temp);
+    const desc = data.weather[0]?.description || "";
+    const icon = data.weather[0]?.icon || "";
+
+    weatherIconEl.textContent = weatherIconFor(icon);
+    weatherTempEl.textContent = `${temp}°C`;
+    weatherDescEl.textContent = desc;
+  } catch (err) {
+    weatherIconEl.textContent = "";
+    weatherTempEl.textContent = "";
+    weatherDescEl.textContent = "날씨 정보를 불러올 수 없습니다.";
+  }
+}
+
 addBtn.addEventListener("click", addAlarm);
 timeInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addAlarm();
@@ -208,5 +258,7 @@ snoozeBtn.addEventListener("click", snoozeAlarm);
 
 updateClock();
 renderAlarms();
+fetchWeather();
 setInterval(updateClock, 1000);
 setInterval(checkAlarms, 1000);
+setInterval(fetchWeather, WEATHER_REFRESH_MS);
