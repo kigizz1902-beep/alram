@@ -33,8 +33,17 @@ body {
   color: var(--text);
   font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   display: flex;
-  justify-content: center;
-  padding: 32px 16px;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 32px;
+}
+
+.header-image {
+  display: block;
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0 calc(50% - 50vw) 16px;
+  object-fit: cover;
 }
 
 .app {
