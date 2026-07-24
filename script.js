@@ -22,6 +22,7 @@ let alarms = loadAlarms();
 let activeAlarmId = null;
 let audioCtx = null;
 let beepInterval = null;
+let currentBriefingText = null;
 
 function loadAlarms() {
   try {
@@ -146,6 +147,17 @@ function triggerAlarm(alarm) {
   ringingTime.textContent = formatTimeLabel(alarm.time);
   overlay.classList.remove("hidden");
   startBeep();
+
+  currentBriefingText = null;
+  fetchRecentNews("최신 날씨 뉴스", 3)
+    .then((data) => {
+      const items = data.items ?? [];
+      renderNewsBriefing(items);
+      currentBriefingText = buildBriefingText(items);
+    })
+    .catch(() => {
+      // 뉴스 브리핑 실패는 알람 소리 재생에 영향을 주지 않는다.
+    });
 }
 
 function startBeep() {
@@ -185,6 +197,15 @@ function stopAlarm() {
   stopBeep();
   overlay.classList.add("hidden");
   activeAlarmId = null;
+
+  try {
+    stopBriefing();
+    if (currentBriefingText) {
+      speakBriefing(currentBriefingText);
+    }
+  } catch {
+    // 뉴스 음성 재생 실패는 알람 끄기 동작에 영향을 주지 않는다.
+  }
 }
 
 function snoozeAlarm() {

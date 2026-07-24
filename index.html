@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>간편 알람</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="news/news.css">
 </head>
 <body>
   <div class="app">
@@ -29,6 +30,12 @@
       <ul id="alarm-list" class="alarm-list"></ul>
       <p id="empty-msg" class="empty-msg">등록된 알람이 없습니다.</p>
     </section>
+
+    <section class="news-section">
+      <button id="news-btn" class="news-btn">📰 최근뉴스</button>
+      <button id="stop-briefing-btn" class="stop-briefing-btn">🔇 뉴스 음성 끄기</button>
+      <div id="news-list" class="news-list"></div>
+    </section>
   </div>
 
   <div id="ringing-overlay" class="overlay hidden">
@@ -36,6 +43,7 @@
       <p class="ringing-title">⏰ 알람</p>
       <p id="ringing-label" class="ringing-label"></p>
       <p id="ringing-time" class="ringing-time"></p>
+      <div id="briefing-list" class="briefing-list"></div>
       <div class="ringing-actions">
         <button id="snooze-btn">5분 후 다시 알림</button>
         <button id="stop-btn">끄기</button>
@@ -43,7 +51,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="script.js"></script>
+  <script src="news/news.js"></script>
 </body>
 </html>
