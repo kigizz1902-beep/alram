@@ -235,6 +235,33 @@ input, button {
   margin-top: 24px;
 }
 
+.save-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.save-remote-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.save-remote-btn:hover {
+  background: var(--accent-hover);
+}
+
+.save-status {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  min-height: 1.2em;
+}
+
 .hidden {
   display: none !important;
 }

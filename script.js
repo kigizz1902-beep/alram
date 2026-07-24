@@ -17,6 +17,8 @@ const stopBtn = document.getElementById("stop-btn");
 const weatherIconEl = document.getElementById("weather-icon");
 const weatherTempEl = document.getElementById("weather-temp");
 const weatherDescEl = document.getElementById("weather-desc");
+const saveRemoteBtn = document.getElementById("save-remote-btn");
+const saveStatusEl = document.getElementById("save-status");
 
 let alarms = loadAlarms();
 let activeAlarmId = null;
@@ -267,6 +269,30 @@ async function fetchWeather() {
   }
 }
 
+async function saveAlarmsRemote() {
+  saveStatusEl.textContent = "저장 중...";
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ alarms }),
+    });
+
+    const data = await res.json();
+
+    if (data.result === "success") {
+      const now = new Date();
+      const timeLabel = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      saveStatusEl.textContent = `저장되었습니다 (${timeLabel})`;
+    } else {
+      saveStatusEl.textContent = "저장에 실패했습니다";
+    }
+  } catch {
+    saveStatusEl.textContent = "저장에 실패했습니다";
+  }
+}
+
 addBtn.addEventListener("click", addAlarm);
 timeInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addAlarm();
@@ -276,6 +302,7 @@ labelInput.addEventListener("keydown", (e) => {
 });
 stopBtn.addEventListener("click", stopAlarm);
 snoozeBtn.addEventListener("click", snoozeAlarm);
+saveRemoteBtn.addEventListener("click", saveAlarmsRemote);
 
 updateClock();
 renderAlarms();
